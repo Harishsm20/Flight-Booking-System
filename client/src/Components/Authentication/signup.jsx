@@ -12,7 +12,7 @@ function Signup() {
     event.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3001/register', {
+      const response = await axios.post('http://localhost:3001/auth/register', {
         name,
         email,
         password, // Assuming you have a password field in your server-side model

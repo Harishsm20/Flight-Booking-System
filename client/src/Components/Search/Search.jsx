@@ -1,104 +1,109 @@
-import React ,{useEffect} from 'react'
-
-//icons
-import {HiOutlineLocationMarker} from 'react-icons/hi'
-import {RiAccountPinCircleLine} from 'react-icons/ri'
-import {RxCalendar} from 'react-icons/rx'
-
-
-// Import aos ===============>>
-
-import Aos from 'aos'
-import 'aos/dist/aos.css'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { HiOutlineLocationMarker } from 'react-icons/hi';
+import { RxCalendar } from 'react-icons/rx';
+import Aos from 'aos';
+import 'aos/dist/aos.css';
 
 const Search = () => {
+   const navigate = useNavigate();
+  const [searchData, setSearchData] = useState({
+    destination: '',
+    from: '',
+    travelDate: '',
+    noOfSeats: 1,
+  });
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    let newValue = value;
+    
+    // If the input is for travelDate, parse the date and update noOfSeats
+    if (name === 'travelDate') {
+      const [day, month, year] = value.split('/').map(Number); // Assuming date format is dd/mm/yyyy
+      const parsedDate = new Date(year, month - 1, day); // Month needs to be 0-based index
+  
+      // Check if the day component is even
+      if (day % 2 === 0) {
+        newValue = 1;
+      } else {
+        newValue = 2;
+      }
+    }
+  
+    setSearchData((prevState) => ({ ...prevState, [name]: newValue }));
+  };
 
-// UseEffect to set animtion
-  useEffect(()=>{
-    Aos.init({duration: 2000})
-  }, [])
+  // Update the submitSearch function to navigate to the correct route
+const submitSearch = async () => {
+  try {
+    if (!searchData.destination) {
+      console.error('Destination is required');
+      return;
+    }
+    console.log('Destination sent:', searchData.destination);
+    navigate(`/airlines/destinations/${encodeURIComponent(searchData.destination)}`);
+  } catch (error) {
+    console.error('Error searching flights:', error);
+  }
+};
 
+  useEffect(() => {
+    Aos.init({ duration: 2500 });
+  }, []);
 
   return (
-      <div className="search container section">
-        <div className="sectionContainer grid" data-aos='fade-up' data-aos-duration='2500'>
-          <div className="btns flex">
-            
-            <div className="singleBtn">
-               <span>Economy</span>
+    <div className="search container section">
+      <div className="sectionContainer grid" data-aos="fade-up" data-aos-duration="2500">
+        <div className="searchInputs flex">
+          <div className="singleInput flex">
+            <div className="iconDiv">
+              <HiOutlineLocationMarker className="icon" />
             </div>
-
-            <div className="singleBtn">
-              <span>Business Class</span>
+            <div className="texts">
+              <h4>From</h4>
+              <input type="text" name="from" value={searchData.from} onChange={handleChange} placeholder="From" />
             </div>
-
-            <div className="singleBtn">
-              <span>First CLass</span>
-            </div>
-
           </div>
-          
-
-
-        <div className="searchInputs flex" data-aos='fade-up' data-aos-duration='2000'>
-          
-          {/* Single input */}
-            <div className="singleInput flex">
-              <div className="iconDiv">
-                <HiOutlineLocationMarker className='icon'/>
-              </div>
-              <div className="texts">
-                <h4>Location</h4>
-                <input type="text" placeholder='Where do you want to go?' />
-              </div>
+          <div className="singleInput flex">
+            <div className="iconDiv">
+              <HiOutlineLocationMarker className="icon" />
             </div>
-
-
-          {/* Single input */}
-            <div className="singleInput flex">
-              <div className="iconDiv">
-                <RiAccountPinCircleLine className='icon'/>
-              </div>
-              <div className="texts">
-                <h4>Travelers</h4>
-                <input type="text" placeholder='Add guests' />
-              </div>
+            <div className="texts">
+              <h4>Destination</h4>
+              <select name="destination" value={searchData.destination} onChange={handleChange}>
+                <option value="">Select Destination</option>
+                <option value="Thailand">Thailand</option>
+                <option value="UK">UK</option>
+                <option value="Japan">Japan</option>
+                <option value="Germany">Germany</option>
+                {/* Add more destination options as needed */}
+              </select>
             </div>
-
-
-          {/*Single input*/}
-            <div className="singleInput flex">
-              <div className="iconDiv">
-                <RxCalendar className='icon'/>
-              </div>
-              <div className="texts">
-                <h4>Check In</h4>
-                <input type="text" placeholder='Add date' />
-              </div>
+          </div>
+          <div className="singleInput flex">
+            <div className="iconDiv">
+              <RxCalendar className="icon" />
             </div>
-
-
-          {/* Single input */}
-            <div className="singleInput flex">
-              <div className="iconDiv">
-                <RxCalendar className='icon'/>
-              </div>
-              <div className="texts">
-                <h4>Check Out</h4>
-                <input type="text" placeholder='Add date' />
-              </div>
+            <div className="texts">
+              <h4>Travel Date</h4>
+              <input type="date" name="travelDate" value={searchData.travelDate} onChange={handleChange} />
             </div>
-
-
-            <button className='btn btnBlock flex'>Search Flight</button>
-
+          </div>
+          <div className="singleInput flex">
+            <div className="iconDiv"></div>
+            <div className="texts">
+              <h4>Number of Seats</h4>
+              <input type="number" name="noOfSeats" value={searchData.noOfSeats} onChange={handleChange} min="1" />
+            </div>
+          </div>
         </div>
-
-        </div>
+        <button className="btn btnBlock flex" onClick={submitSearch}>
+          Search Flights
+        </button>
       </div>
-   
-  )
-}
+    </div>
+  );
+};
 
-export default Search
+export default Search;
