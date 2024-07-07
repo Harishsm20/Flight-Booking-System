@@ -5,6 +5,8 @@ const EmployeeSchema = new mongoose.Schema({
     name:String,
     email:String,
     password:String,
+    bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }],
+
 })
 
 const EmployeeModel = mongoose.model("employees",EmployeeSchema)

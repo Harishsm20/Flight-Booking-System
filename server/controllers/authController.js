@@ -38,7 +38,7 @@ router.post('/register', async (req, res) => {
     const newEmployee = new EmployeeModel({
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password, // Assuming you have a password field
+      password: req.body.password, 
     });
 
     // Log employee data before saving
