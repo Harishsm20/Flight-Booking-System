@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { CgAirplane } from "react-icons/cg";
-import Widget from "../Widget/Widget"; // Importing the Widget component
+import { CgAirplane } from 'react-icons/cg';
+import Widget from '../Widget/Widget';
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Typography,
+} from '@mui/material'; // Importing Material-UI components
 import '../../DisplayAirline.css'; // Custom CSS for additional styling
 
 const DisplayAirline = () => {
@@ -12,7 +19,9 @@ const DisplayAirline = () => {
   useEffect(() => {
     const fetchAirlines = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/airlines/destinations/${destination}`);
+        const response = await axios.get(
+          `http://localhost:3001/airlines/destinations/${destination}`
+        );
         setAirlines(response.data);
       } catch (error) {
         console.error('Error fetching airlines:', error);
@@ -39,21 +48,52 @@ const DisplayAirline = () => {
       <div className="container shape-container d-flex align-items-center py-lg">
         <div className="col px-0">
           <div className="row align-items-center justify-content-center">
-            <div className="col-lg-6 text-center">
-              <h1 className="display-airline-heading" data-aos="fade-down">Airlines for {destination}</h1>
-              <div className="airlines-list">
+            <div className="col-lg-12">
+              <Typography
+                variant="h4"
+                component="h1"
+                align="center"
+                gutterBottom
+                className="display-airline-heading"
+              >
+                Airlines for {destination}
+              </Typography>
+              <div className="airlines-grid">
                 {airlines.map((airline, index) => (
-                  <div key={airline._id} className="airline-card" data-aos="fade-up">
-                    <h3 className="airline-destination">{airline.destination}</h3>
-                    {Object.entries(airline.airline).map(([key, value], i) => (
-                      <Widget // Using the Widget component
-                        key={i}
-                        icon={<CgAirplane className="h-7 w-7" />} // Icon as airplane
-                        title={key} // Title as airline key
-                        subtitle={value} // Subtitle as airline value
-                      />
-                    ))}
-                  </div>
+                  <Card
+                    key={airline._id}
+                    sx={{
+                      maxWidth: { sm: '100%', md: '50%' },
+                      flexGrow: 1,
+                      outline: '1px solid',
+                      outlineColor: 'divider',
+                      backgroundColor: 'background.default',
+                      margin: '10px',
+                    }}
+                  >
+                    <CardContent>
+                      <Typography variant="h5" component="h2">
+                        {airline.destination}
+                      </Typography>
+                      <div className="widgets-grid">
+                        {Object.entries(airline.airline).map(
+                          ([key, value], i) => (
+                            <Widget
+                              key={i}
+                              icon={<CgAirplane className="h-7 w-7" />}
+                              title={key}
+                              subtitle={value}
+                            />
+                          )
+                        )}
+                      </div>
+                    </CardContent>
+                    <CardActions>
+                      <Button variant="contained" color="primary">
+                        Book
+                      </Button>
+                    </CardActions>
+                  </Card>
                 ))}
               </div>
             </div>

@@ -3,7 +3,6 @@ const flightDateSchema = new mongoose.Schema({
   id : String,
   airline : String,
   flightNumber : String,
-  departureDate : String,
   boardingTime : String,
   arraivalTime : String,
   
