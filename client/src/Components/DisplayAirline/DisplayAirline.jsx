@@ -59,41 +59,38 @@ const DisplayAirline = () => {
                 Airlines for {destination}
               </Typography>
               <div className="airlines-grid">
-                {airlines.map((airline, index) => (
-                  <Card
-                    key={airline._id}
-                    sx={{
-                      maxWidth: { sm: '100%', md: '50%' },
-                      flexGrow: 1,
-                      outline: '1px solid',
-                      outlineColor: 'divider',
-                      backgroundColor: 'background.default',
-                      margin: '10px',
-                    }}
-                  >
-                    <CardContent>
-                      <Typography variant="h5" component="h2">
-                        {airline.destination}
-                      </Typography>
-                      <div className="widgets-grid">
-                        {Object.entries(airline.airline).map(
-                          ([key, value], i) => (
-                            <Widget
-                              key={i}
-                              icon={<CgAirplane className="h-7 w-7" />}
-                              title={key}
-                              subtitle={value}
-                            />
-                          )
-                        )}
-                      </div>
-                    </CardContent>
-                    <CardActions>
-                      <Button variant="contained" color="primary">
-                        Book
-                      </Button>
-                    </CardActions>
-                  </Card>
+                {airlines.map((airline) => (
+                  <div key={airline._id} className="airline-card-container">
+                    <Typography variant="h5" component="h2" align="center">
+                      {airline.name}
+                    </Typography>
+                    {Object.entries(airline.airline).map(([key, value], i) => (
+                      <Card
+                        key={i}
+                        sx={{
+                          width: '100%',
+                          borderRadius: '16px',
+                          outline: '1px solid',
+                          outlineColor: 'divider',
+                          backgroundColor: 'background.default',
+                          margin: '10px 0',
+                        }}
+                      >
+                        <CardContent>
+                          <Widget
+                            icon={<CgAirplane className="h-7 w-7" />}
+                            title={key}
+                            subtitle={value}
+                          />
+                        </CardContent>
+                        <CardActions>
+                          <Button variant="contained" color="primary" fullWidth>
+                            Book
+                          </Button>
+                        </CardActions>
+                      </Card>
+                    ))}
+                  </div>
                 ))}
               </div>
             </div>

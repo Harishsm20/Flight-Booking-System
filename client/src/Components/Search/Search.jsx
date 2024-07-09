@@ -4,9 +4,10 @@ import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { RxCalendar } from 'react-icons/rx';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
+import axios from 'axios';
 
 const Search = () => {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [searchData, setSearchData] = useState({
     destination: '',
     from: '',
@@ -18,35 +19,48 @@ const Search = () => {
     const { name, value } = event.target;
     let newValue = value;
     
-    // If the input is for travelDate, parse the date and update noOfSeats
+ 
     if (name === 'travelDate') {
-      const [day, month, year] = value.split('/').map(Number); // Assuming date format is dd/mm/yyyy
-      const parsedDate = new Date(year, month - 1, day); // Month needs to be 0-based index
+      const [year, month, day] = value.split('-').map(Number); 
+      const parsedDate = new Date(year, month - 1, day); 
   
       // Check if the day component is even
-      if (day % 2 === 0) {
-        newValue = 1;
-      } else {
-        newValue = 2;
-      }
-    }
+      const seats = day % 2 === 0 ? 2 : 1;
+      console.log(seats);
   
-    setSearchData((prevState) => ({ ...prevState, [name]: newValue }));
+      setSearchData((prevState) => ({ ...prevState, noOfSeats: seats, travelDate: newValue }));
+    } else {
+      setSearchData((prevState) => ({ ...prevState, [name]: newValue }));
+    }
   };
 
   // Update the submitSearch function to navigate to the correct route
-const submitSearch = async () => {
-  try {
-    if (!searchData.destination) {
-      console.error('Destination is required');
-      return;
+
+  const submitSearch = async () => {
+    try {
+      if (!searchData.destination || !searchData.travelDate) {
+        console.error('Destination and travel date are required');
+        return;
+      }
+
+      const response = await axios.get('http://localhost:3001/airlines/search', {
+        params: {
+          destination: searchData.destination,
+          travelDate: searchData.travelDate,
+          seats: searchData.noOfSeats,
+        },
+      });
+
+      const { flights, seats } = response.data;
+      console.log('Flights:', flights);
+      console.log('Seats:', seats);
+
+      // Navigate to the results page with flights and seats information
+      navigate('/results', { state: { flights, seats } });
+    } catch (error) {
+      console.error('Error searching flights:', error);
     }
-    console.log('Destination sent:', searchData.destination);
-    navigate(`/airlines/destinations/${encodeURIComponent(searchData.destination)}`);
-  } catch (error) {
-    console.error('Error searching flights:', error);
-  }
-};
+  };
 
   useEffect(() => {
     Aos.init({ duration: 2500 });
