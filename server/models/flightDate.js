@@ -9,5 +9,5 @@ const flightDateSchema = new mongoose.Schema({
   
 })
 
-const FlightDateModel = mongoose.model("flights",flightDateSchema);
+const FlightDateModel = mongoose.model("flightDate",flightDateSchema);
 module.exports = FlightDateModel

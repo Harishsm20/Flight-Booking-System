@@ -4,31 +4,28 @@ const FlightDateModel = require('../models/flightDate');
 const router = express.Router();
 
 // Endpoint to handle the search for airlines based on the provided destinations
-router.get('/destinations/:destination', async (req, res) => {
-  const { destination } = req.params;
-  try {
-    const airlines = await FlightModel.find({ destination });
-    res.json(airlines);
-  } catch (error) {
-    console.error('Error fetching airlines:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+// router.get('/destinations/:destination', async (req, res) => {
+//   const { destination } = req.params;
+//   try {
+//     const airlines = await FlightModel.find({ destination });
+//     res.json(airlines);
+//   } catch (error) {
+//     console.error('Error fetching airlines:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 
 router.get('/search', async (req, res) => {
   const { destination, travelDate, seats } = req.query;
 
   try {
-    // Query FlightModel for airlines matching the destination
     const airlines = await FlightModel.find({ destination });
 
     // Prepare an array to store results
     let results = [];
 
-    // Loop through each airline found
-    for (let airline of airlines) {
-      // Query FlightDateModel for flights matching the departure date (seats)
-      const flights = await FlightDateModel.find({ id: airline.id, departureDate: seats });
+    for (let airlineName of airlines) {
+      const flights = await FlightDateModel.find({ airline: airlineName, departureDate: seats });
 
       // Map and structure the data as needed
       const mappedFlights = flights.map(flight => ({
@@ -56,7 +53,7 @@ router.get('/search', async (req, res) => {
       });
     }
 
-
+    console.log(results);
     res.status(200).json(results);
   } catch (error) {
     console.error('Error searching flights:', error);

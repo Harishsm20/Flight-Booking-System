@@ -20,7 +20,7 @@ const DisplayAirline = () => {
     const fetchAirlines = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/airlines/destinations/${destination}`
+          `http://localhost:3001/airlines/search`
         );
         setAirlines(response.data);
       } catch (error) {

@@ -42,7 +42,7 @@ const Search = () => {
         console.error('Destination and travel date are required');
         return;
       }
-
+  
       const response = await axios.get('http://localhost:3001/airlines/search', {
         params: {
           destination: searchData.destination,
@@ -50,14 +50,13 @@ const Search = () => {
           seats: searchData.noOfSeats,
         },
       });
-
+  
       const { flights, seats } = response.data;
       console.log('Flights:', flights);
       console.log('Seats:', seats);
-
-      // Navigate to the results page with flights and seats information
-      navigate('/results', { state: { flights, seats } });
-    } catch (error) {
+  
+      // Navigate to the destination page with flights and seats information
+      navigate(`/destinations/${encodeURIComponent(searchData.destination)}`);    } catch (error) {
       console.error('Error searching flights:', error);
     }
   };
