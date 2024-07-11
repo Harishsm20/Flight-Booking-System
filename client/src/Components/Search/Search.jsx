@@ -42,6 +42,8 @@ const Search = () => {
         console.error('Destination and travel date are required');
         return;
       }
+
+      console.log(searchData.noOfSeats)
   
       const response = await axios.get('http://localhost:3001/airlines/search', {
         params: {
