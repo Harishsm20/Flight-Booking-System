@@ -70,16 +70,13 @@ const Travelers = () => {
         <h2 data-aos='fade-down' data-aos-duration='2500'>
           Top travelers of this month!
         </h2>
-
-
-
         <div className="travelersContainer grid">
           {
             travelers.map(({id,destinationImage,travelerImage,travelerName,socialLink})=>{
               return(
                 // Single passenger card 
 
-                <div key={id} className="singleTraveler" data-aos='fade-up' data-aos-duration='2500'>
+                <div key={id} className="singleTraveler" data-aos='fade-up' data-aos-duration='1500'>
 
                   <img src={destinationImage} className='destinationImage'/>
       

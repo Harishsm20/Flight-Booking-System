@@ -9,8 +9,8 @@ import {
   CardActions,
   Button,
   Typography,
-} from '@mui/material'; // Importing Material-UI components
-import '../../DisplayAirline.css'; // Custom CSS for additional styling
+} from '@mui/material';
+import '../../DisplayAirline.css';
 
 const DisplayAirline = () => {
   const { destination } = useParams();
@@ -20,7 +20,13 @@ const DisplayAirline = () => {
     const fetchAirlines = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/airlines/search`
+          `http://localhost:3001/airlines/search`, {
+            params: {
+              destination: destination,
+              travelDate: 'your-travel-date', // Replace with actual travel date
+              seats: 'your-seats-number' // Replace with actual number of seats
+            }
+          }
         );
         setAirlines(response.data);
       } catch (error) {
@@ -60,36 +66,33 @@ const DisplayAirline = () => {
               </Typography>
               <div className="airlines-grid">
                 {airlines.map((airline) => (
-                  <div key={airline._id} className="airline-card-container">
+                  <div key={airline.airline.id} className="airline-card-container">
                     <Typography variant="h5" component="h2" align="center">
-                      {airline.name}
+                      {airline.airline.airline}
                     </Typography>
-                    {Object.entries(airline.airline).map(([key, value], i) => (
-                      <Card
-                        key={i}
-                        sx={{
-                          width: '100%',
-                          borderRadius: '16px',
-                          outline: '1px solid',
-                          outlineColor: 'divider',
-                          backgroundColor: 'background.default',
-                          margin: '10px 0',
-                        }}
-                      >
-                        <CardContent>
-                          <Widget
-                            icon={<CgAirplane className="h-7 w-7" />}
-                            title={key}
-                            subtitle={value}
-                          />
-                        </CardContent>
-                        <CardActions>
-                          <Button variant="contained" color="primary" fullWidth>
-                            Book
-                          </Button>
-                        </CardActions>
-                      </Card>
-                    ))}
+                    <Card
+                      sx={{
+                        width: '100%',
+                        borderRadius: '16px',
+                        outline: '1px solid',
+                        outlineColor: 'divider',
+                        backgroundColor: 'background.default',
+                        margin: '10px 0',
+                      }}
+                    >
+                      <CardContent>
+                        <Widget
+                          icon={<CgAirplane className="h-7 w-7" />}
+                          title={airline.airline.airline}
+                          subtitle={`Price: ${airline.airline.price}`}
+                        />
+                      </CardContent>
+                      <CardActions>
+                        <Button variant="contained" color="primary" fullWidth>
+                          Book
+                        </Button>
+                      </CardActions>
+                    </Card>
                   </div>
                 ))}
               </div>

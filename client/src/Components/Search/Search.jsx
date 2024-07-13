@@ -18,33 +18,30 @@ const Search = () => {
   const handleChange = (event) => {
     const { name, value } = event.target;
     let newValue = value;
-    
- 
+
     if (name === 'travelDate') {
       const [year, month, day] = value.split('-').map(Number); 
-      const parsedDate = new Date(year, month - 1, day); 
-  
+      const parsedDate = new Date(year, month - 1, day);
+
       // Check if the day component is even
       const seats = day % 2 === 0 ? 2 : 1;
-      console.log(seats);
-  
+
       setSearchData((prevState) => ({ ...prevState, noOfSeats: seats, travelDate: newValue }));
     } else {
       setSearchData((prevState) => ({ ...prevState, [name]: newValue }));
     }
   };
 
-  // Update the submitSearch function to navigate to the correct route
-
   const submitSearch = async () => {
+    console.log('Submit search called with:', searchData);
     try {
       if (!searchData.destination || !searchData.travelDate) {
         console.error('Destination and travel date are required');
         return;
       }
 
-      console.log(searchData.noOfSeats)
-  
+      console.log(searchData.noOfSeats);
+
       const response = await axios.get('http://localhost:3001/airlines/search', {
         params: {
           destination: searchData.destination,
@@ -52,13 +49,14 @@ const Search = () => {
           seats: searchData.noOfSeats,
         },
       });
-  
+
       const { flights, seats } = response.data;
       console.log('Flights:', flights);
       console.log('Seats:', seats);
-  
+
       // Navigate to the destination page with flights and seats information
-      navigate(`/destinations/${encodeURIComponent(searchData.destination)}`);    } catch (error) {
+      navigate(`/destinations/${encodeURIComponent(searchData.destination)}`);
+    } catch (error) {
       console.error('Error searching flights:', error);
     }
   };
