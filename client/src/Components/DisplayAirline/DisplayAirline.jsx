@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { CgAirplane } from 'react-icons/cg';
 import Widget from '../Widget/Widget';
 import {
@@ -14,6 +14,9 @@ import '../../DisplayAirline.css';
 
 const DisplayAirline = () => {
   const { destination } = useParams();
+  const location = useLocation();
+  const { travelDate, seats } = location.state || {};
+
   const [airlines, setAirlines] = useState([]);
 
   useEffect(() => {
@@ -23,8 +26,8 @@ const DisplayAirline = () => {
           `http://localhost:3001/airlines/search`, {
             params: {
               destination: destination,
-              travelDate: 'your-travel-date', // Replace with actual travel date
-              seats: 'your-seats-number' // Replace with actual number of seats
+              travelDate: travelDate,
+              seats: seats,
             }
           }
         );
@@ -34,8 +37,10 @@ const DisplayAirline = () => {
       }
     };
 
-    fetchAirlines();
-  }, [destination]);
+    if (destination && travelDate && seats) {
+      fetchAirlines();
+    }
+  }, [destination, travelDate, seats]);
 
   return (
     <div className="section section-lg section-hero section-shaped">
@@ -86,6 +91,19 @@ const DisplayAirline = () => {
                           title={airline.airline.airline}
                           subtitle={`Price: ${airline.airline.price}`}
                         />
+                        <Typography variant="body2" color="textSecondary">
+                          Flight Number: {airline.airline.flightNumber}
+                        </Typography>
+                        {airline.flights.map((flight) => (
+                          <div key={flight.id}>
+                            <Typography variant="body2" color="textSecondary">
+                              Boarding Time: {flight.boardingTime}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              Arrival Time: {flight.arrivalTime}
+                            </Typography>
+                          </div>
+                        ))}
                       </CardContent>
                       <CardActions>
                         <Button variant="contained" color="primary" fullWidth>

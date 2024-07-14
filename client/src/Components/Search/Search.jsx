@@ -32,33 +32,18 @@ const Search = () => {
     }
   };
 
-  const submitSearch = async () => {
-    console.log('Submit search called with:', searchData);
-    try {
-      if (!searchData.destination || !searchData.travelDate) {
-        console.error('Destination and travel date are required');
-        return;
-      }
-
-      console.log(searchData.noOfSeats);
-
-      const response = await axios.get('http://localhost:3001/airlines/search', {
-        params: {
-          destination: searchData.destination,
-          travelDate: searchData.travelDate,
-          seats: searchData.noOfSeats,
-        },
-      });
-
-      const { flights, seats } = response.data;
-      console.log('Flights:', flights);
-      console.log('Seats:', seats);
-
-      // Navigate to the destination page with flights and seats information
-      navigate(`/destinations/${encodeURIComponent(searchData.destination)}`);
-    } catch (error) {
-      console.error('Error searching flights:', error);
+  const submitSearch = () => {
+    if (!searchData.destination || !searchData.travelDate) {
+      console.error('Destination and travel date are required');
+      return;
     }
+
+    navigate(`/destinations/${encodeURIComponent(searchData.destination)}`, {
+      state: {
+        travelDate: searchData.travelDate,
+        seats: searchData.noOfSeats,
+      },
+    });
   };
 
   useEffect(() => {
