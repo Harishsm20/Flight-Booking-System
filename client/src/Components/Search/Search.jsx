@@ -32,18 +32,22 @@ const Search = () => {
     }
   };
 
-  const submitSearch = () => {
-    if (!searchData.destination || !searchData.travelDate) {
-      console.error('Destination and travel date are required');
-      return;
-    }
+  const submitSearch = async () => {
+    try {
+      if (!searchData.destination || !searchData.travelDate) {
+        console.error('Destination and travel date are required');
+        return;
+      }
 
-    navigate(`/destinations/${encodeURIComponent(searchData.destination)}`, {
-      state: {
-        travelDate: searchData.travelDate,
-        seats: searchData.noOfSeats,
-      },
-    });
+      navigate(`/destinations/${encodeURIComponent(searchData.destination)}`, {
+        state: {
+          travelDate: searchData.travelDate,
+          seats: searchData.noOfSeats,
+        },
+      });
+    } catch (error) {
+      console.error('Error searching flights:', error);
+    }
   };
 
   useEffect(() => {

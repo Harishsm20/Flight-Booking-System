@@ -22,6 +22,7 @@ const DisplayAirline = () => {
   useEffect(() => {
     const fetchAirlines = async () => {
       try {
+        console.log('Fetching airlines with:', { destination, travelDate, seats });
         const response = await axios.get(
           `http://localhost:3001/airlines/search`, {
             params: {
@@ -31,6 +32,7 @@ const DisplayAirline = () => {
             }
           }
         );
+        console.log('Response data:', response.data);
         setAirlines(response.data);
       } catch (error) {
         console.error('Error fetching airlines:', error);
@@ -70,49 +72,55 @@ const DisplayAirline = () => {
                 Airlines for {destination}
               </Typography>
               <div className="airlines-grid">
-                {airlines.map((airline) => (
-                  <div key={airline.airline.id} className="airline-card-container">
-                    <Typography variant="h5" component="h2" align="center">
-                      {airline.airline.airline}
-                    </Typography>
-                    <Card
-                      sx={{
-                        width: '100%',
-                        borderRadius: '16px',
-                        outline: '1px solid',
-                        outlineColor: 'divider',
-                        backgroundColor: 'background.default',
-                        margin: '10px 0',
-                      }}
-                    >
-                      <CardContent>
-                        <Widget
-                          icon={<CgAirplane className="h-7 w-7" />}
-                          title={airline.airline.airline}
-                          subtitle={`Price: ${airline.airline.price}`}
-                        />
-                        <Typography variant="body2" color="textSecondary">
-                          Flight Number: {airline.airline.flightNumber}
-                        </Typography>
-                        {airline.flights.map((flight) => (
-                          <div key={flight.id}>
-                            <Typography variant="body2" color="textSecondary">
-                              Boarding Time: {flight.boardingTime}
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary">
-                              Arrival Time: {flight.arrivalTime}
-                            </Typography>
-                          </div>
-                        ))}
-                      </CardContent>
-                      <CardActions>
-                        <Button variant="contained" color="primary" fullWidth>
-                          Book
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  </div>
-                ))}
+                {airlines.length > 0 ? (
+                  airlines.map((airline, index) => (
+                    <div key={`${airline.airline.id}-${index}`} className="airline-card-container">
+                      <Typography variant="h5" component="h2" align="center">
+                        {airline.airline.airline}
+                      </Typography>
+                      <Card
+                        sx={{
+                          width: '100%',
+                          borderRadius: '16px',
+                          outline: '1px solid',
+                          outlineColor: 'divider',
+                          backgroundColor: 'background.default',
+                          margin: '10px 0',
+                        }}
+                      >
+                        <CardContent>
+                          <Widget
+                            icon={<CgAirplane className="h-7 w-7" />}
+                            title={airline.airline.airline}
+                            subtitle={`Price: ${airline.airline.price}`}
+                          />
+                          <Typography variant="body2" color="textSecondary">
+                            Flight Number: {airline.airline.flightNumber || 'N/A'}
+                          </Typography>
+                          {airline.flights.map((flight, flightIndex) => (
+                            <div key={`${flight.id}-${flightIndex}`}>
+                              <Typography variant="body2" color="textSecondary">
+                                Boarding Time: {flight.boardingTime || 'N/A'}
+                              </Typography>
+                              <Typography variant="body2" color="textSecondary">
+                                Arrival Time: {flight.arrivalTime || 'N/A'}
+                              </Typography>
+                            </div>
+                          ))}
+                        </CardContent>
+                        <CardActions>
+                          <Button variant="contained" color="primary" fullWidth>
+                            Book
+                          </Button>
+                        </CardActions>
+                      </Card>
+                    </div>
+                  ))
+                ) : (
+                  <Typography variant="h6" component="p" align="center">
+                    No flights available for the selected destination and date.
+                  </Typography>
+                )}
               </div>
             </div>
           </div>
