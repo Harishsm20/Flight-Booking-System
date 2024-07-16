@@ -44,6 +44,20 @@ const DisplayAirline = () => {
     }
   }, [destination, travelDate, seats]);
 
+  const calculateArrivalTime = (boardingTime) => {
+    const [hours, minutes, period] = boardingTime.split(/[: ]/);
+    let date = new Date();
+    date.setHours(period === 'PM' ? parseInt(hours) + 12 : parseInt(hours));
+    date.setMinutes(parseInt(minutes));
+    date.setHours(date.getHours() - 2);
+
+    const newHours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+    const newPeriod = date.getHours() >= 12 ? 'PM' : 'AM';
+    const formattedMinutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${newHours}:${formattedMinutes} ${newPeriod}`;
+  };
+
   return (
     <div className="section section-lg section-hero section-shaped">
       <div className="shape shape-style-1 shape-primary">
@@ -94,16 +108,17 @@ const DisplayAirline = () => {
                             title={airline.airline.airline}
                             subtitle={`Price: ${airline.airline.price}`}
                           />
-                          <Typography variant="body2" color="textSecondary">
-                            Flight Number: {airline.airline.flightNumber || 'N/A'}
-                          </Typography>
+
                           {airline.flights.map((flight, flightIndex) => (
                             <div key={`${flight.id}-${flightIndex}`}>
+                              <Typography variant="body2" color="textSecondary">
+                                Flight Number: {flight.flightNumber || 'N/A'}
+                              </Typography>
                               <Typography variant="body2" color="textSecondary">
                                 Boarding Time: {flight.boardingTime || 'N/A'}
                               </Typography>
                               <Typography variant="body2" color="textSecondary">
-                                Arrival Time: {flight.arrivalTime || 'N/A'}
+                                Arrival Time: {calculateArrivalTime(flight.boardingTime) || 'N/A'}
                               </Typography>
                             </div>
                           ))}
