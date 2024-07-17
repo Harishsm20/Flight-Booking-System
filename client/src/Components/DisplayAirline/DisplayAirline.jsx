@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { CgAirplane } from 'react-icons/cg';
 import Widget from '../Widget/Widget';
 import {
@@ -15,6 +15,7 @@ import '../../DisplayAirline.css';
 const DisplayAirline = () => {
   const { destination } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { travelDate, seats } = location.state || {};
 
   const [airlines, setAirlines] = useState([]);
@@ -56,6 +57,10 @@ const DisplayAirline = () => {
     const formattedMinutes = date.getMinutes().toString().padStart(2, '0');
 
     return `${newHours}:${formattedMinutes} ${newPeriod}`;
+  };
+
+  const handleBookClick = (flight) => {
+    navigate('/book', { state: { flight } });
   };
 
   return (
@@ -112,6 +117,9 @@ const DisplayAirline = () => {
                           {airline.flights.map((flight, flightIndex) => (
                             <div key={`${flight.id}-${flightIndex}`}>
                               <Typography variant="body2" color="textSecondary">
+                              Flight Date : {travelDate || 'N/A'}
+                              </Typography>
+                              <Typography variant="body2" color="textSecondary">
                                 Flight Number: {flight.flightNumber || 'N/A'}
                               </Typography>
                               <Typography variant="body2" color="textSecondary">
@@ -120,14 +128,12 @@ const DisplayAirline = () => {
                               <Typography variant="body2" color="textSecondary">
                                 Arrival Time: {calculateArrivalTime(flight.boardingTime) || 'N/A'}
                               </Typography>
+                              <Button variant="contained" color="primary" fullWidth onClick={() => handleBookClick(flight)}>
+                                Book
+                              </Button>
                             </div>
                           ))}
                         </CardContent>
-                        <CardActions>
-                          <Button variant="contained" color="primary" fullWidth>
-                            Book
-                          </Button>
-                        </CardActions>
                       </Card>
                     </div>
                   ))
