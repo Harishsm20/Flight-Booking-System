@@ -64,19 +64,7 @@ const DisplayAirline = () => {
   };
 
   return (
-    <div className="section section-lg section-hero section-shaped">
-      <div className="shape shape-style-1 shape-primary">
-        <span className="span-150"></span>
-        <span className="span-50"></span>
-        <span className="span-50"></span>
-        <span className="span-75"></span>
-        <span className="span-100"></span>
-        <span className="span-75"></span>
-        <span className="span-50"></span>
-        <span className="span-100"></span>
-        <span className="span-50"></span>
-        <span className="span-100"></span>
-      </div>
+    <div className="section section-lg section-hero section-shaped ">
       <div className="container shape-container d-flex align-items-center py-lg">
         <div className="col px-0">
           <div className="row align-items-center justify-content-center">

@@ -7,6 +7,7 @@ import AApp from './Components/Authentication/app'
 
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import DisplayAirline from './Components/DisplayAirline/DisplayAirline'
+import Book from './Components/Book/Book'
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -19,7 +20,9 @@ function App() {
       <Route path='/login' element={<Login />} ></Route>
       <Route path='/app' element={<AApp />} ></Route>
       <Route path='/destinations/:destination' element={<DisplayAirline />}></Route>
-      
+      <Route path="/book" element={<Book />} />
+
+
     </Routes>
    </BrowserRouter>
   )
