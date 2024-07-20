@@ -1,0 +1,12 @@
+@tailwind base;@tailwind components;@tailwind utilities;
+
+.head{
+    /* color:  rgb(200,175,174); */
+}
+.card{
+    background-image: radial-gradient(circle, rgb(157,139,164) rgb(7,104,119));
+    /* background-image: radial
+    -gradient(circle, red, yellow, green); */
+
+
+}

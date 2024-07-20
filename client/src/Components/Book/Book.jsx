@@ -6,7 +6,7 @@ import {
   Typography,
   Button,
 } from '@mui/material';
-// import '../../Book.css';
+import './book.css';
 
 const Book = () => {
   const location = useLocation();
@@ -32,10 +32,10 @@ const Book = () => {
 
   return (
     
-    <div className="book-container ">
+    <div className="book-container m-20 ">
       <Card sx={{ maxWidth: 600, margin: 'auto', marginTop: '20px' }}>
-        <CardContent className="bg-slate-900">
-          <Typography variant="h5" component="h2" gutterBottom>
+        <CardContent className="bg-cyan-900  card">
+          <Typography variant="h5" component="h2" gutterBottom className="head" >+
             Flight Details
           </Typography>
           <Typography variant="body1">Flight Number: {flight.flightNumber}</Typography>
