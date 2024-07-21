@@ -906,3 +906,8 @@ h2 {
   background: var(--PrimaryColor);
   border-radius: 10px;
 }/*# sourceMappingURL=main.css.map */
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
