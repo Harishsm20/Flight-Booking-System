@@ -13,7 +13,7 @@ const Book = () => {
 
   const handleConfirmBooking = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/bookings', {
+      const response = await axios.post('http://localhost:3001/book/confirmBooking', {
         userId: 'USER_ID',  // Replace with actual user ID
         flightId: flight._id,
         seats: 1,  // Replace with the actual number of seats

@@ -1,18 +1,18 @@
 const express = require('express');
 
 const Booking = require('../models/Booking');
-const Flight = require('../models/Flight');
-const User = require('../models/User');
+const FlightModel = require('../models/Flights');
+const EmployeeModel = require('../models/Employees');
 
 const router = express.Router();
 
 
-router.post('/book' ,async(req, res) => {
+router.post('/confirmBook' ,async(req, res) => {
     const { userId, flightId, seats } = req.body;
   
     try {
-      const user = await User.findById(userId);
-      const flight = await Flight.findById(flightId);
+      const user = await EmployeeModel.findById(userId);
+      const flight = await FlightModel.findById(flightId);
   
       if (!user || !flight) {
         return res.status(404).json({ message: 'User or Flight not found' });
@@ -33,3 +33,5 @@ router.post('/book' ,async(req, res) => {
   
   }
 )
+
+module.exports = router;

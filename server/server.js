@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const authController = require('./controllers/authController'); // Import auth controller
 const flightController = require('./controllers/flightController'); // Import flight controller
+const bookController = require('./controllers/bookingController')
 
 
 const PORT = 3001;
@@ -29,8 +30,9 @@ app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(bodyParser.json());
 
 // Use controllers for routing
-app.use('/auth', authController); // Use authController for /auth routes
-app.use('/airlines', flightController); // Use flightController for /flights routes
+app.use('/auth', authController); 
+app.use('/airlines', flightController); 
+app.use('./book',bookController);
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
