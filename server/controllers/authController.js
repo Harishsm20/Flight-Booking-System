@@ -1,55 +1,54 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const EmployeeModel = require('../models/Employees');
 
 const router = express.Router();
+const secretKey = 'your_secret_key';  // Replace with your actual secret key
 
-router.post('/login', async (req,res)=>{
-  console.log("Login body:", req.body);
-  const {email,password} = req.body;
-  EmployeeModel.findOne({email:email})
-  .then( user=>{
-      if(user){
-        if(user.password === password){
-          res.json("Success");
-          console.log("Login Success");
-        }
-        else{
-          res.json("Password is incorrect");
-          console.log("Login Failed");
-        }
-      }
-      else{
-        res.json("Record not found");
-        console.log("No record");
-      }
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await EmployeeModel.findOne({ email: email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-    )
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
+    res.json({ message: 'Success', token });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
-
 router.post('/register', async (req, res) => {
-  console.log("Received request body:", req.body);
+  const { name, email, password } = req.body;
 
-  if (!req.body.name || !req.body.email) {
-    return res.status(400).json({ error: 'Name and email are required fields.' });
+  if (!name || !email) {
+    return res.status(400).json({ message: 'Name and email are required fields' });
   }
 
   try {
-    const newEmployee = new EmployeeModel({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password, 
-    });
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Log employee data before saving
-    console.log("Employee data before saving:", newEmployee);
+    const newEmployee = new EmployeeModel({
+      name: name,
+      email: email,
+      password: hashedPassword,
+    });
 
     const savedEmployee = await newEmployee.save();
     res.json(savedEmployee);
-
   } catch (err) {
     console.error("Error saving employee:", err);
-    res.status(500).json({ error: 'Error registering employee.' });
+    res.status(500).json({ message: 'Error registering employee' });
   }
 });
 

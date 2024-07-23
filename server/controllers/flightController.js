@@ -56,7 +56,7 @@ router.get('/search', async (req, res) => {
     }
 
     // Send the results as a response
-    console.log(`[${new Date().toISOString()}]  Final results:`, results);
+    // console.log(`[${new Date().toISOString()}]  Final results:`, results);
     res.status(200).json(results);
   } catch (error) {
     console.error('Error searching flights:', error);

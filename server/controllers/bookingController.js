@@ -14,9 +14,9 @@ router.post('/confirmBook' ,async(req, res) => {
       const user = await EmployeeModel.findById(userId);
       const flight = await FlightModel.findById(flightId);
   
-      if (!user || !flight) {
-        return res.status(404).json({ message: 'User or Flight not found' });
-      }
+      // if (!user || !flight) {
+      //   return res.status(404).json({ message: 'User or Flight not found' });
+      // }
   
       const booking = new Booking({
         user: user._id,

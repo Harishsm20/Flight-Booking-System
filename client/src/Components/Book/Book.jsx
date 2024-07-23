@@ -13,10 +13,10 @@ const Book = () => {
 
   const handleConfirmBooking = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/book/confirmBooking', {
-        userId: 'USER_ID',  // Replace with actual user ID
+      const response = await axios.post('http://localhost:3001/book/confirmBook', {
+        userId: 'USER_ID',  
         flightId: flight._id,
-        seats: 1,  // Replace with the actual number of seats
+        seats: 1,  
       });
       console.log('Booking confirmed:', response.data);
       navigate('/confirmation');  // Redirect to a confirmation page
