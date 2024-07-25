@@ -1,5 +1,3 @@
-// book.jsx
-
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent, Typography, Button } from '@mui/material';
@@ -12,11 +10,20 @@ const Book = () => {
   const { flight } = location.state || {};
 
   const handleConfirmBooking = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('User not logged in');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:3001/book/confirmBook', {
-        userId: 'USER_ID',  
         flightId: flight._id,
-        seats: 1,  
+        seats: 1,
+      }, {
+        headers: {
+          Authorization: token,
+        },
       });
       console.log('Booking confirmed:', response.data);
       navigate('/confirmation');  // Redirect to a confirmation page
@@ -44,23 +51,22 @@ const Book = () => {
   }
 
   return (
-<div className="book-container m-20 flex font-serif">
-  <Card sx={{ maxWidth: 600, margin: 'auto', marginTop: '20px' }} className="flex-1 w-max">
-    <CardContent className="flex-1 bg-cyan-900 card bg-gradient-to-br from-[#008B8B] via-[#6D6FB5] to-[#B74D73]">
-      <Typography variant="h4" component="h2" gutterBottom className="head text-[#FFE7D4] text-5xl font-bold">
-        Flight Details
-      </Typography>
-      <Typography variant="body1">Flight Number: {flight.flightNumber}</Typography>
-      <Typography variant="body1">Boarding Time: {flight.boardingTime}</Typography>
-      <Typography variant="body1">Arrival Time: {calculateArrivalTime(flight.boardingTime)}</Typography>
-      <Typography variant="body1">Departure Date: {flight.departureDate}</Typography>
-    </CardContent>
-    <Button variant="contained" color="primary" fullWidth onClick={handleConfirmBooking}>
-      Confirm Booking
-    </Button>
-  </Card>
-</div>
-
+    <div className="book-container m-20 flex font-serif">
+      <Card sx={{ maxWidth: 600, margin: 'auto', marginTop: '20px' }} className="flex-1 w-max">
+        <CardContent className="flex-1 bg-cyan-900 card bg-gradient-to-br from-[#008B8B] via-[#6D6FB5] to-[#B74D73]">
+          <Typography variant="h4" component="h2" gutterBottom className="head text-[#FFE7D4] text-5xl font-bold">
+            Flight Details
+          </Typography>
+          <Typography variant="body1">Flight Number: {flight.flightNumber}</Typography>
+          <Typography variant="body1">Boarding Time: {flight.boardingTime}</Typography>
+          <Typography variant="body1">Arrival Time: {calculateArrivalTime(flight.boardingTime)}</Typography>
+          <Typography variant="body1">Departure Date: {flight.departureDate}</Typography>
+        </CardContent>
+        <Button variant="contained" color="primary" fullWidth onClick={handleConfirmBooking}>
+          Confirm Booking
+        </Button>
+      </Card>
+    </div>
   );
 };
 
