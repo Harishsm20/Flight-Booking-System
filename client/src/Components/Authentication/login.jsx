@@ -18,7 +18,8 @@ function Login() {
 
         .then(result=>{
             console.log(result)
-            if(result.data === 'Success'){
+            console.log(result.data)
+            if(result.data.message === 'Success'){
                 navigate('/app')
             }
         })

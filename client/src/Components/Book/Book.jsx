@@ -10,19 +10,16 @@ const Book = () => {
   const { flight } = location.state || {};
 
   const handleConfirmBooking = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.error('User not logged in');
-      return;
-    }
+    const token = localStorage.getItem('token');  // Assuming the token is stored in localStorage after login
+    const secretKey = localStorage.getItem('secretKey');  // Assuming the secret key is stored in localStorage after login
 
     try {
       const response = await axios.post('http://localhost:3001/book/confirmBook', {
-        flightId: flight._id,
-        seats: 1,
-      }, {
-        headers: {
-          Authorization: token,
+        headers: { 'authorization': token },
+        data: {
+          flightId: flight._id,
+          seats: 1,
+          secretKey: secretKey,
         },
       });
       console.log('Booking confirmed:', response.data);

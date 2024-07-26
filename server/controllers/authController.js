@@ -38,42 +38,28 @@ router.post('/login', async (req, res) => {
 });
 
 
-// Protect your booking route
-router.post('/confirmBook', authenticateToken, async (req, res) => {
-  const { flightId, seats } = req.body;
-  const userId = req.user.userId;
+router.post('/register', async (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({ message: 'Name and email are required fields' });
+  }
 
   try {
-    const user = await EmployeeModel.findById(userId);
-    const flight = await FlightModel.findById(flightId);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!user || !flight) {
-      return res.status(404).json({ message: 'User or Flight not found' });
-    }
-
-    const booking = new Booking({
-      user: user._id,
-      flight: flight._id,
-      seats,
+    const newEmployee = new EmployeeModel({
+      name: name,
+      email: email,
+      password: hashedPassword,
     });
 
-    await booking.save();
-
-    res.status(201).json(booking);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    const savedEmployee = await newEmployee.save();
+    res.json(savedEmployee);
+  } catch (err) {
+    console.error("Error saving employee:", err);
+    res.status(500).json({ message: 'Error registering employee' });
   }
 });
-
-const authenticateToken = (req, res, next) => {
-  const token = req.headers['authorization'];
-  if (!token) return res.status(403).json({ message: 'Token is required' });
-
-  jwt.verify(token, secretKey, (err, user) => {
-    if (err) return res.status(403).json({ message: 'Invalid token' });
-    req.user = user;
-    next();
-  });
-};
 
 module.exports = router;
