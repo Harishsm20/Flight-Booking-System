@@ -10,20 +10,23 @@ const Book = () => {
   const { flight } = location.state || {};
 
   const handleConfirmBooking = async () => {
-    const token = localStorage.getItem('token');  // Assuming the token is stored in localStorage after login
-    const secretKey = localStorage.getItem('secretKey');  // Assuming the secret key is stored in localStorage after login
+    const token = localStorage.getItem('token');  
+    const secretKey = localStorage.getItem('secretKey');
 
     try {
-      const response = await axios.post('http://localhost:3001/book/confirmBook', {
-        headers: { 'authorization': token },
-        data: {
+      const response = await axios.post(
+        'http://localhost:3001/book/confirmBook',
+        {
           flightId: flight._id,
           seats: 1,
           secretKey: secretKey,
         },
-      });
+        {
+          headers: { 'authorization': token },
+        }
+      );
       console.log('Booking confirmed:', response.data);
-      navigate('/confirmation');  // Redirect to a confirmation page
+      navigate('/confirmation');
     } catch (error) {
       console.error('Error confirming booking:', error);
     }

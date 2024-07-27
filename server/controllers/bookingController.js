@@ -7,6 +7,7 @@ const EmployeeModel = require('../models/Employees');
 const router = express.Router();
 
 router.post('/confirmBook', async (req, res) => {
+  console.log("Reached booking");
   const token = req.headers['authorization'];
   const { flightId, seats, secretKey } = req.body;
 

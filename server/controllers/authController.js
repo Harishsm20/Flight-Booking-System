@@ -13,7 +13,6 @@ const router = express.Router();
 const generateSecretKey = () => {
   return crypto.randomBytes(32).toString('hex');
 };
-// Login route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -30,12 +29,13 @@ router.post('/login', async (req, res) => {
 
     const secretKey = generateSecretKey();
     const token = jwt.sign({ userId: user._id, secretKey }, secretKey, { expiresIn: '1h' });
-    res.json({ message: 'Success', token });
+    res.json({ message: 'Success', token, secretKey });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 
 router.post('/register', async (req, res) => {

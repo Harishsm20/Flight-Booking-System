@@ -6,9 +6,9 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const app = express();
-const authController = require('./controllers/authController'); // Import auth controller
-const flightController = require('./controllers/flightController'); // Import flight controller
-const bookController = require('./controllers/bookingController')
+const authController = require('./controllers/authController'); 
+const flightController = require('./controllers/flightController');
+const bookController = require('./controllers/bookingController');
 
 
 const PORT = 3001;
