@@ -1,6 +1,4 @@
-// server.js or your main entry file
 require('dotenv').config();
-
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -13,11 +11,12 @@ const router = express.Router();
 const generateSecretKey = () => {
   return crypto.randomBytes(32).toString('hex');
 };
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await EmployeeModel.findOne({ email: email });
+    const user = await EmployeeModel.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -28,15 +27,17 @@ router.post('/login', async (req, res) => {
     }
 
     const secretKey = generateSecretKey();
-    const token = jwt.sign({ userId: user._id, secretKey }, secretKey, { expiresIn: '1h' });
-    res.json({ message: 'Success', token, secretKey });
+    const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
+
+    req.session.secret = secretKey;
+    req.session.token = token;
+
+    res.json({ message: 'Success' });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
-
 
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
@@ -49,8 +50,8 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newEmployee = new EmployeeModel({
-      name: name,
-      email: email,
+      name,
+      email,
       password: hashedPassword,
     });
 

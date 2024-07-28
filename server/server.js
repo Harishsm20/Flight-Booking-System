@@ -10,6 +10,7 @@ const authController = require('./controllers/authController');
 const flightController = require('./controllers/flightController');
 const bookController = require('./controllers/bookingController');
 
+const session = require('express-session'); 
 
 const PORT = 3001;
 
@@ -30,6 +31,13 @@ connect();
 
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(bodyParser.json());
+
+app.use(session({
+  secret: 'placeholder_secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } 
+}));
 
 // Use controllers for routing
 app.use('/auth', authController); 

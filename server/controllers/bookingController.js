@@ -8,8 +8,9 @@ const router = express.Router();
 
 router.post('/confirmBook', async (req, res) => {
   console.log("Reached booking");
-  const token = req.headers['authorization'];
-  const { flightId, seats, secretKey } = req.body;
+  const token = req.session.token;
+  const secretKey = req.session.secret;
+  const { flightId, seats } = req.body;
 
   if (!token || !secretKey) {
     return res.status(403).json({ message: 'Token and secret key are required' });

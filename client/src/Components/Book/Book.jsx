@@ -10,21 +10,13 @@ const Book = () => {
   const { flight } = location.state || {};
 
   const handleConfirmBooking = async () => {
-    const token = localStorage.getItem('token');  
-    const secretKey = localStorage.getItem('secretKey');
-
     try {
-      const response = await axios.post(
-        'http://localhost:3001/book/confirmBook',
-        {
-          flightId: flight._id,
-          seats: 1,
-          secretKey: secretKey,
-        },
-        {
-          headers: { 'authorization': token },
-        }
-      );
+      const response = await axios.post('http://localhost:3001/book/confirmBook', {
+        flightId: flight._id,
+        seats: 1,  
+      }, {
+        withCredentials: true  // Ensure this is set to true to send session cookies
+      });
       console.log('Booking confirmed:', response.data);
       navigate('/confirmation');
     } catch (error) {

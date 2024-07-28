@@ -7,27 +7,22 @@ router.get('/search', async (req, res) => {
   const { destination, travelDate, seats } = req.query;
 
   try {
-    // Fetch airlines based on the destination
     const airlines = await FlightModel.find({ destination });
-    // console.log('Airlines found:', airlines);
 
     let results = [];
 
     if (airlines.length > 0) {
-      const airline = airlines[0]; // Assuming there's only one entry per destination
+      const airline = airlines[0]; 
       const keys = Object.keys(airline.airline);
-      // console.log('Keys found:', keys);
 
       // Iterate over each key to process the flights
       for (let key of keys) {
-        // console.log('Processing airline:', key);
 
         // Find flights based on the airline key and departure date
         const flights = await FlightDateModel.find({
           airline: key,
           departureDate: seats
         });
-        // console.log('Flights found for', key, ':', flights);
 
         // Map the flights to a specific format
         const mappedFlights = flights.map(flight => ({
@@ -56,7 +51,6 @@ router.get('/search', async (req, res) => {
     }
 
     // Send the results as a response
-    // console.log(`[${new Date().toISOString()}]  Final results:`, results);
     res.status(200).json(results);
   } catch (error) {
     console.error('Error searching flights:', error);
