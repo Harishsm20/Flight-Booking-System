@@ -13,9 +13,9 @@ const Book = () => {
     try {
       const response = await axios.post('http://localhost:3001/book/confirmBook', {
         flightId: flight._id,
-        seats: 1,  
+        seats: 1,
       }, {
-        withCredentials: true  // Ensure this is set to true to send session cookies
+        withCredentials: true 
       });
       console.log('Booking confirmed:', response.data);
       navigate('/confirmation');

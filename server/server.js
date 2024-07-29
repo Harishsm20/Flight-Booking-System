@@ -29,11 +29,15 @@ const connect = async () => {
 
 connect();
 
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors(
+  { origin: 'http://localhost:5173' ,
+    credentials: true
+  }
+));
 app.use(bodyParser.json());
 
 app.use(session({
-  secret: 'placeholder_secret',
+  secret: 'placeholder_secret', // This will be overridden per session
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false } 
