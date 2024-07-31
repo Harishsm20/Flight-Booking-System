@@ -8,8 +8,13 @@ const router = express.Router();
 
 router.post('/confirmBook', async (req, res) => {
   console.log("Reached booking");
+
   const token = req.session.token;
   const secretKey = req.session.secret;
+
+  console.log("Token:", token); // Debug log
+  console.log("Secret Key:", secretKey); // Debug log
+
   const { flightId, seats } = req.body;
 
   if (!token || !secretKey) {
@@ -37,6 +42,7 @@ router.post('/confirmBook', async (req, res) => {
 
     res.status(201).json(booking);
   } catch (error) {
+    console.error("Error during booking:", error); // Debug log
     res.status(403).json({ message: 'Invalid token or secret key' });
   }
 });

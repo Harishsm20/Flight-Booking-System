@@ -15,7 +15,7 @@ const Book = () => {
         flightId: flight._id,
         seats: 1,
       }, {
-        withCredentials: true 
+        withCredentials: true
       });
       console.log('Booking confirmed:', response.data);
       navigate('/confirmation');

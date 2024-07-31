@@ -3,11 +3,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
-const session = require('express-session'); 
-const dotenv = require('dotenv');
+const session = require('express-session');
 
-const app = express();
-const authController = require('./controllers/authController'); 
+const authController = require('./controllers/authController');
 const flightController = require('./controllers/flightController');
 const bookController = require('./controllers/bookingController');
 
@@ -38,15 +36,15 @@ app.use(cors({
 app.use(bodyParser.json());
 
 app.use(session({
-  secret: 'placeholder_secret', // This will be overridden per session
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false },
 }));
 
 // Use controllers for routing
-app.use('/auth', authController); 
-app.use('/airlines', flightController); 
+app.use('/auth', authController);
+app.use('/airlines', flightController);
 app.use('/book', bookController);
 
 app.listen(PORT, () => {
