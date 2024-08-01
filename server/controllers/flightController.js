@@ -39,10 +39,10 @@ router.get('/search', async (req, res) => {
           results.push({
             airline: {
               id: airline._id,
-              airline: key, // Use the key as the airline name
+              airline: key, 
               flightNumber: airline.flightNumber,
               destination: airline.destination,
-              price: airline.airline[key], // Use the value associated with the key
+              price: airline.airline[key], 
             },
             flights: mappedFlights,
           });
@@ -50,7 +50,6 @@ router.get('/search', async (req, res) => {
       }
     }
 
-    // Send the results as a response
     res.status(200).json(results);
   } catch (error) {
     console.error('Error searching flights:', error);

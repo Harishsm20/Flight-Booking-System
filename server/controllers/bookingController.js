@@ -7,7 +7,9 @@ const EmployeeModel = require('../models/Employees');
 const router = express.Router();
 
 router.post('/confirmBook', async (req, res) => {
+
   console.log("Reached booking");
+  
   const token = req.session.token;
   const secretKey = req.session.secret;
   console.log('Token:', token);
