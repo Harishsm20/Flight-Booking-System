@@ -1,41 +1,42 @@
-require('dotenv').config();
 const express = require('express');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+const Booking = require('../models/Booking');
+const FlightModel = require('../models/Flights');
 const EmployeeModel = require('../models/Employees');
 
 const router = express.Router();
 
-const generateSecretKey = () => {
-  return crypto.randomBytes(32).toString('hex');
-};
+router.post('/confirmBook', async (req, res) => {
+  console.log("Reached booking");
+  const token = req.session.token;
+  const { flightId, seats } = req.body;
 
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  if (!token) {
+    return res.status(403).json({ message: 'Token is required' });
+  }
 
   try {
-    const user = await EmployeeModel.findOne({ email: email });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    const decoded = jwt.verify(token, process.env.SESSION_SECRET);
+    const userId = decoded.userId;
+
+    const user = await EmployeeModel.findById(userId);
+    const flight = await FlightModel.findById(flightId);
+
+    if (!user || !flight) {
+      return res.status(404).json({ message: 'User or Flight not found' });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid password' });
-    }
+    const booking = new Booking({
+      user: user._id,
+      flight: flight._id,
+      seats,
+    });
 
-    const secretKey = generateSecretKey();
-    const token = jwt.sign({ userId: user._id, secretKey }, secretKey, { expiresIn: '1h' });
+    await booking.save();
 
-    req.session.token = token;
-    req.session.secret = secretKey;
-    console.log(secret);
-
-    res.json({ message: 'Success', token });
+    res.status(201).json(booking);
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(403).json({ message: 'Invalid token' });
   }
 });
 

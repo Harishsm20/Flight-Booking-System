@@ -9,6 +9,7 @@ const authController = require('./controllers/authController');
 const flightController = require('./controllers/flightController');
 const bookController = require('./controllers/bookingController');
 
+const app = express();
 const PORT = 3001;
 
 // Connect to MongoDB
