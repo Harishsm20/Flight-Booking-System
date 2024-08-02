@@ -1,65 +1,61 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const Booking = require('../models/Booking');
-const FlightModel = require('../models/Flights');
+const bcrypt = require('bcrypt');
 const EmployeeModel = require('../models/Employees');
 
 const router = express.Router();
 
-router.post('/confirmBook', async (req, res) => {
-  console.log("Reached booking");
-  const token = req.session.token;
-  const { flightId, seats } = req.body;
-
-  if (!token) {
-    return res.status(403).json({ message: 'Token is required' });
-  }
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
 
   try {
-    const decoded = jwt.verify(token, process.env.SESSION_SECRET);
-    const userId = decoded.userId;
+    const user = await EmployeeModel.findOne({ email });
 
-    const user = await EmployeeModel.findById(userId);
-    const flight = await FlightModel.findById(flightId);
-
-    if (!user || !flight) {
-      return res.status(404).json({ message: 'User or Flight not found' });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const booking = new Booking({
-      user: user._id,
-      flight: flight._id,
-      seats,
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.SESSION_SECRET, {
+      expiresIn: '1h', // Set token expiration as needed
     });
 
-    await booking.save();
+    // Store the token and user details in the session
+    req.session.token = token;
+    req.session.user = { id: user._id, email: user.email };
 
-    res.status(201).json(booking);
+    res.status(200).json({ message: 'Success', token });
   } catch (error) {
-    res.status(403).json({ message: 'Invalid token' });
+    console.error('Error logging in:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (!name || !email) {
-    return res.status(400).json({ message: 'Name and email are required fields' });
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'Name, email, and password are required fields' });
   }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newEmployee = new EmployeeModel({
-      name: name,
-      email: email,
+      name,
+      email,
       password: hashedPassword,
     });
 
     const savedEmployee = await newEmployee.save();
-    res.json(savedEmployee);
+    res.status(201).json(savedEmployee);
   } catch (err) {
-    console.error("Error saving employee:", err);
+    console.error('Error registering employee:', err);
     res.status(500).json({ message: 'Error registering employee' });
   }
 });

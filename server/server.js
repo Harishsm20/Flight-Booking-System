@@ -7,7 +7,7 @@ const session = require('express-session');
 
 const authController = require('./controllers/authController');
 const flightController = require('./controllers/flightController');
-const bookController = require('./controllers/bookingController');
+const bookingController = require('./controllers/bookingController');
 
 const app = express();
 const PORT = 3001;
@@ -46,7 +46,7 @@ app.use(session({
 // Use controllers for routing
 app.use('/auth', authController);
 app.use('/airlines', flightController);
-app.use('/book', bookController);
+app.use('/book', bookingController);
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
