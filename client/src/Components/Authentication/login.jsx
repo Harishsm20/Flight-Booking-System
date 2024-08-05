@@ -11,13 +11,15 @@ function Login() {
     event.preventDefault();
 
     try {
-      const result = await axios.post('http://localhost:3001/auth/login', { email, password }, { withCredentials: true });
+      const response = await axios.post('http://localhost:3001/auth/login', { email, password });
 
-      if (result.data.message === 'Success') {
+      if (response.data.message === 'Success') {
+        localStorage.setItem('accessToken', response.data.accessToken);
+        localStorage.setItem('refreshToken', response.data.refreshToken);
         navigate('/app');
       }
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error('Login error:', error);
     }
   };
 
@@ -30,8 +32,7 @@ function Login() {
             <label htmlFor="email">
               <strong>Email</strong>
             </label>
-            <input
-              type="email"
+            <input type="email"
               placeholder='Enter Email'
               autoComplete='off'
               name="email"
@@ -39,12 +40,12 @@ function Login() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
+
           <div className="mb-3">
-            <label htmlFor="email">
+            <label htmlFor="password">
               <strong>Password</strong>
             </label>
-            <input
-              type="password"
+            <input type="password"
               placeholder='Enter Password'
               autoComplete='off'
               name="password"
@@ -52,6 +53,7 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+
           <button type='submit' className='btn btn-success w-100 rounded-0'>
             Login
           </button>

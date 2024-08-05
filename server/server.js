@@ -1,53 +1,60 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-require('dotenv').config();
-const session = require('express-session');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const EmployeeModel = require('../models/Employees');
 
-const authController = require('./controllers/authController');
-const flightController = require('./controllers/flightController');
-const bookingController = require('./controllers/bookingController');
+const router = express.Router();
 
-const app = express();
-const PORT = 3001;
-
-// Connect to MongoDB
-const connect = async () => {
-  try {
-    await mongoose.connect(`mongodb+srv://${process.env.User}:${process.env.pswd}@cluster0.p3yw9uj.mongodb.net/${process.env.DB}`, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
-  }
+const generateAccessToken = (user) => {
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 };
 
-connect();
+const generateRefreshToken = (user) => {
+  return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+};
 
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
 
-app.use(bodyParser.json());
+  try {
+    const user = await EmployeeModel.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false },
-}));
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) return res.status(403).json({ message: 'Invalid password' });
 
-// Use controllers for routing
-app.use('/auth', authController);
-app.use('/airlines', flightController);
-app.use('/book', bookingController);
+    const userPayload = { userId: user._id, email: user.email };
+    const accessToken = generateAccessToken(userPayload);
+    const refreshToken = generateRefreshToken(userPayload);
 
-app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
+    req.session.token = accessToken;
+    req.session.refreshToken = refreshToken;
+
+    res.status(200).json({ accessToken, refreshToken, message: 'Success' });
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
+
+router.post('/token', (req, res) => {
+  const refreshToken = req.body.token;
+  if (!refreshToken) return res.status(401).json({ message: 'Refresh token required' });
+
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: 'Invalid refresh token' });
+
+    const userPayload = { userId: user.userId, email: user.email };
+    const newAccessToken = generateAccessToken(userPayload);
+
+    res.json({ accessToken: newAccessToken });
+  });
+});
+
+router.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) return res.status(500).json({ message: 'Failed to log out' });
+    res.status(200).json({ message: 'Logged out successfully' });
+  });
+});
+
+module.exports = router;

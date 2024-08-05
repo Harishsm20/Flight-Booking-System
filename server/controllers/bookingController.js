@@ -1,3 +1,4 @@
+// bookingController.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const Booking = require('../models/Booking');
@@ -7,22 +8,15 @@ const EmployeeModel = require('../models/Employees');
 const router = express.Router();
 
 router.post('/confirmBook', async (req, res) => {
-
-  console.log("Reached booking");
-  
   const token = req.session.token;
-  const secretKey = req.session.secret;
-  console.log('Token:', token);
-  console.log('Secret Key:', secretKey);
-  console.log('Session in booking:', req.session);
   const { flightId, seats } = req.body;
 
-  if (!token || !secretKey) {
-    return res.status(403).json({ message: 'Token and secret key are required' });
+  if (!token) {
+    return res.status(403).json({ message: 'Token is required' });
   }
 
   try {
-    const decoded = jwt.verify(token, secretKey);
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     const userId = decoded.userId;
 
     const user = await EmployeeModel.findById(userId);
@@ -42,7 +36,7 @@ router.post('/confirmBook', async (req, res) => {
 
     res.status(201).json(booking);
   } catch (error) {
-    res.status(403).json({ message: 'Invalid token or secret key' });
+    res.status(403).json({ message: 'Invalid token' });
   }
 });
 
