@@ -1,24 +1,17 @@
 // bookingController.js
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const Booking = require('../models/Booking');
 const FlightModel = require('../models/Flights');
 const EmployeeModel = require('../models/Employees');
+const authenticateToken = require('../middleware/middleware');
 
 const router = express.Router();
 
-router.post('/confirmBook', async (req, res) => {
-  const token = req.session.token;
+router.post('/confirmBook', authenticateToken, async (req, res) => {
   const { flightId, seats } = req.body;
-
-  if (!token) {
-    return res.status(403).json({ message: 'Token is required' });
-  }
+  const userId = req.user.userId;
 
   try {
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    const userId = decoded.userId;
-
     const user = await EmployeeModel.findById(userId);
     const flight = await FlightModel.findById(flightId);
 
@@ -36,7 +29,7 @@ router.post('/confirmBook', async (req, res) => {
 
     res.status(201).json(booking);
   } catch (error) {
-    res.status(403).json({ message: 'Invalid token' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
