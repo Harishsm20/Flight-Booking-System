@@ -11,9 +11,10 @@ const Book = () => {
 
   const handleConfirmBooking = async () => {
     try {
+      const seat = (flight.departureDate == 2) ? 2 : 1
       const response = await axios.post('http://localhost:3001/book/confirmBook', {
-        flightId: flight._id,
-        seats: 1,
+        flightId: flight.id,
+        seats: seat,
       }, {
         withCredentials: true 
       });

@@ -17,6 +17,7 @@ const Search = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    console.log(name, value)
     let newValue = value;
 
     if (name === 'travelDate') {
@@ -35,6 +36,7 @@ const Search = () => {
   const submitSearch = async () => {
     try {
       if (!searchData.destination || !searchData.travelDate) {
+        alert('Destination and travel date are required')
         console.error('Destination and travel date are required');
         return;
       }
