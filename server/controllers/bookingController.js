@@ -12,6 +12,7 @@ router.post('/confirmBook', async (req, res) => {
   const { flightId, seats } = req.body;
 
   if (!token) {
+    console.log('Token not found')
     return res.status(403).json({ message: 'Token is required' });
   }
 

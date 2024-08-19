@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent, Typography, Button } from '@mui/material';
 import axios from 'axios';
@@ -9,15 +9,34 @@ const Book = () => {
   const navigate = useNavigate();
   const { flight } = location.state || {};
 
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      sessionStorage.setItem('jwtToken', token);
+    }
+  }, []);
+
   const handleConfirmBooking = async () => {
     try {
-      const seat = (flight.departureDate == 2) ? 2 : 1
-      const response = await axios.post('http://localhost:3001/book/confirmBook', {
-        flightId: flight.id,
-        seats: seat,
-      }, {
-        withCredentials: true 
-      });
+      const seat = flight.departureDate === 2 ? 2 : 1;
+      const flightId = flight.id;
+      const seats = seat;
+
+      console.log(flightId, seats, flight.flightNumber);
+
+      const token = sessionStorage.getItem('jwtToken');
+
+      const response = await axios.post(
+        'http://localhost:3001/book/confirmBook',
+        { flightId, seats },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
       console.log('Booking confirmed:', response.data);
       navigate('/confirmation');
     } catch (error) {

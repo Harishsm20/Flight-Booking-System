@@ -14,7 +14,6 @@ function Login() {
       const response = await axios.post('http://localhost:3001/auth/login', { email, password });
 
       if (response.data.message === 'Success') {
-        console.log(response.data);
         localStorage.setItem('accessToken', response.data.accessToken);
         localStorage.setItem('refreshToken', response.data.refreshToken);
         navigate('/app');
