@@ -9,13 +9,6 @@ const Book = () => {
   const navigate = useNavigate();
   const { flight } = location.state || {};
 
-  useEffect(() => {
-    const token = localStorage.getItem('jwtToken');
-    if (token) {
-      sessionStorage.setItem('jwtToken', token);
-    }
-  }, []);
-
   const handleConfirmBooking = async () => {
     try {
       const seat = flight.departureDate === 2 ? 2 : 1;
@@ -24,7 +17,9 @@ const Book = () => {
 
       console.log(flightId, seats, flight.flightNumber);
 
-      const token = sessionStorage.getItem('jwtToken');
+      // Retrieve the token from local storage instead of session storage
+      const token = localStorage.getItem('accessToken');
+      console.log(token)
 
       const response = await axios.post(
         'http://localhost:3001/book/confirmBook',

@@ -9,20 +9,20 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     try {
       const response = await axios.post('http://localhost:3001/auth/login', { email, password });
-
+  
       if (response.data.message === 'Success') {
-        localStorage.setItem('accessToken', response.data.accessToken);
-        localStorage.setItem('refreshToken', response.data.refreshToken);
+        sessionStorage.setItem('accessToken', response.data.accessToken);
+        sessionStorage.setItem('refreshToken', response.data.refreshToken);
         navigate('/app');
       }
     } catch (error) {
       console.error('Login error:', error);
     }
   };
-
+  
   return (
     <div className='d-flex justify-content-center align-items-center bg-secondary vh-100'>
       <div className="bg-white p-3 rounded w-25">
