@@ -1,4 +1,3 @@
-//bookingController.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const Booking = require('../models/Booking');
@@ -8,11 +7,11 @@ const EmployeeModel = require('../models/Employees');
 const router = express.Router();
 
 router.post('/confirmBook', async (req, res) => {
-  const token = req.session.token;
+  const token = req.headers.authorization?.split(' ')[1]; // Retrieve token from Authorization header
   const { flightId, seats } = req.body;
 
   if (!token) {
-    console.log('Token not found')
+    console.log('Token not found');
     return res.status(403).json({ message: 'Token is required' });
   }
 
@@ -37,7 +36,11 @@ router.post('/confirmBook', async (req, res) => {
 
     res.status(201).json(booking);
   } catch (error) {
-    console.error(error)
+    if (error.name === 'TokenExpiredError') {
+      console.error('Token expired:', error);
+      return res.status(403).json({ message: 'Token expired' });
+    }
+    console.error(error);
     res.status(403).json({ message: 'Invalid token' });
   }
 });

@@ -8,6 +8,8 @@ const Book = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { flight } = location.state || {};
+  let token = sessionStorage.getItem('accessToken');
+  console.log(token)
 
   const handleConfirmBooking = async () => {
     try {
@@ -15,13 +17,11 @@ const Book = () => {
       const flightId = flight.id;
       const seats = seat;
 
-      console.log(flightId, seats, flight.flightNumber);
+      // Retrieve the token from session storage
 
-      // Retrieve the token from local storage instead of session storage
-      const token = localStorage.getItem('accessToken');
-      console.log(token)
 
-      const response = await axios.post(
+      // Make the booking request
+      let response = await axios.post(
         'http://localhost:3001/book/confirmBook',
         { flightId, seats },
         {
@@ -33,9 +33,27 @@ const Book = () => {
       );
 
       console.log('Booking confirmed:', response.data);
-      navigate('/confirmation');
+      // navigate('/confirmation');
     } catch (error) {
-      console.error('Error confirming booking:', error);
+      if (error.response.status === 403 && error.response.data.message === 'Invalid token') {
+        // Refresh the token if expired
+        const refreshToken = sessionStorage.getItem('refreshToken');
+        if (refreshToken) {
+          try {
+            const refreshResponse = await axios.post('http://localhost:3001/auth/token', { token: refreshToken });
+            sessionStorage.setItem('accessToken', refreshResponse.data.accessToken);
+            // Retry the booking request with the new token
+            await handleConfirmBooking();
+          } catch (refreshError) {
+            console.error('Error refreshing token:', refreshError);
+            navigate('/login'); 
+          }
+        } else {
+          navigate('/login');
+        }
+      } else {
+        console.error('Error confirming booking:', error);
+      }
     }
   };
 
